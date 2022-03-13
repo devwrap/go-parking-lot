@@ -1,6 +1,9 @@
 package model
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type ParkingLot struct {
 	size         int
@@ -13,25 +16,41 @@ func (pl *ParkingLot) CreateParkingLot(size int) {
 }
 
 func (pl *ParkingLot) ParkVehicle(vehicle Vehicle) {
-	spot := pl.getRecentSpot()
-	if spot == -1 {
-		fmt.Println("Parking lot is full!!")
-		return
+	spot, err := pl.getRecentSpot()
+	if err != nil {
+		fmt.Println("Parking failed: ", err)
 	} else {
-		pl.parkingSlots[spot].vehicle = vehicle
-		pl.parkingSlots[spot].available = false
+		spot.vehicle = vehicle
+		spot.available = false
 	}
 }
 
-func (pl *ParkingLot) UnParkVehicle() {
-
+func (pl *ParkingLot) UnParkVehicle(vehicleNumber string) {
+	spot, err := pl.getParkingSlot(vehicleNumber)
+	if err != nil {
+		fmt.Println("UnPark failed: ", err)
+	} else {
+		spot.available = true
+		return
+	}
 }
 
-func (pl ParkingLot) getRecentSpot() int {
-	for i := 0; i < pl.size; i++ {
-		if pl.parkingSlots[i].available {
-			return i
+func (pl ParkingLot) getRecentSpot() (*ParkingSlot, error) {
+	for _, parkingSlot := range pl.parkingSlots {
+		if parkingSlot.available {
+			return &parkingSlot, nil
 		}
 	}
-	return -1
+	for i := 0; i < pl.size; i++ {
+	}
+	return nil, errors.New("parking lot is full")
+}
+
+func (pl *ParkingLot) getParkingSlot(vehicleNumber string) (*ParkingSlot, error) {
+	for _, parkingSlot := range pl.parkingSlots {
+		if parkingSlot.available == false && parkingSlot.vehicle.number == vehicleNumber {
+			return &parkingSlot, nil
+		}
+	}
+	return nil, errors.New("no such car parked")
 }
