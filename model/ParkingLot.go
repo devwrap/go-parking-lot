@@ -6,13 +6,13 @@ import (
 )
 
 type ParkingLot struct {
-	size         int
-	parkingSlots []ParkingSlot
+	Size         int
+	ParkingSlots []ParkingSlot
 }
 
 func (pl *ParkingLot) CreateParkingLot(size int) {
-	pl.size = size
-	pl.parkingSlots = make([]ParkingSlot, size)
+	pl.Size = size
+	pl.ParkingSlots = make([]ParkingSlot, size)
 }
 
 func (pl *ParkingLot) ParkVehicle(vehicle Vehicle) {
@@ -36,19 +36,19 @@ func (pl *ParkingLot) UnParkVehicle(vehicleNumber string) {
 }
 
 func (pl ParkingLot) getRecentSpot() (*ParkingSlot, error) {
-	for _, parkingSlot := range pl.parkingSlots {
+	for _, parkingSlot := range pl.ParkingSlots {
 		if parkingSlot.available {
 			return &parkingSlot, nil
 		}
 	}
-	for i := 0; i < pl.size; i++ {
+	for i := 0; i < pl.Size; i++ {
 	}
 	return nil, errors.New("parking lot is full")
 }
 
 func (pl *ParkingLot) getParkingSlot(vehicleNumber string) (*ParkingSlot, error) {
-	for _, parkingSlot := range pl.parkingSlots {
-		if parkingSlot.available == false && parkingSlot.vehicle.number == vehicleNumber {
+	for _, parkingSlot := range pl.ParkingSlots {
+		if parkingSlot.available == false && parkingSlot.vehicle.Number == vehicleNumber {
 			return &parkingSlot, nil
 		}
 	}

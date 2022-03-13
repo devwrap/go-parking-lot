@@ -1,10 +1,10 @@
 package model
 
 type Vehicle struct {
-	number string
-	color  string
+	Number string
+	Color  string
 }
 
 func (v *Vehicle) getVehicleNum() string {
-	return v.number
+	return v.Number
 }
