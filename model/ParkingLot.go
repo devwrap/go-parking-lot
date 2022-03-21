@@ -13,44 +13,48 @@ type ParkingLot struct {
 func (pl *ParkingLot) CreateParkingLot(size int) {
 	pl.Size = size
 	pl.ParkingSlots = make([]ParkingSlot, size)
+	for spot, _ := range pl.ParkingSlots {
+		pl.ParkingSlots[spot].available = true
+	}
 }
 
 func (pl *ParkingLot) ParkVehicle(vehicle Vehicle) {
-	spot, err := pl.getRecentSpot()
+	spotNumber, err := pl.getRecentSpot()
 	if err != nil {
 		fmt.Println("Parking failed: ", err)
 	} else {
-		spot.vehicle = vehicle
-		spot.available = false
+		pl.ParkingSlots[spotNumber].vehicle = vehicle
+		pl.ParkingSlots[spotNumber].available = false
+		fmt.Println("Parked car successfully")
 	}
 }
 
 func (pl *ParkingLot) UnParkVehicle(vehicleNumber string) {
-	spot, err := pl.getParkingSlot(vehicleNumber)
+	spotNumber, err := pl.getParkingSlot(vehicleNumber)
 	if err != nil {
 		fmt.Println("UnPark failed: ", err)
 	} else {
-		spot.available = true
-		return
+		pl.ParkingSlots[spotNumber].available = true
+		fmt.Println("Parked car successfully")
 	}
 }
 
-func (pl ParkingLot) getRecentSpot() (*ParkingSlot, error) {
-	for _, parkingSlot := range pl.ParkingSlots {
+func (pl ParkingLot) getRecentSpot() (int, error) {
+	for spotNumber, parkingSlot := range pl.ParkingSlots {
 		if parkingSlot.available {
-			return &parkingSlot, nil
+			return spotNumber, nil
 		}
 	}
 	for i := 0; i < pl.Size; i++ {
 	}
-	return nil, errors.New("parking lot is full")
+	return -1, errors.New("parking lot is full")
 }
 
-func (pl *ParkingLot) getParkingSlot(vehicleNumber string) (*ParkingSlot, error) {
-	for _, parkingSlot := range pl.ParkingSlots {
+func (pl *ParkingLot) getParkingSlot(vehicleNumber string) (int, error) {
+	for spotNumber, parkingSlot := range pl.ParkingSlots {
 		if parkingSlot.available == false && parkingSlot.vehicle.Number == vehicleNumber {
-			return &parkingSlot, nil
+			return spotNumber, nil
 		}
 	}
-	return nil, errors.New("no such car parked")
+	return -1, errors.New("no such car parked")
 }

@@ -44,13 +44,8 @@ func startApp() {
 }
 
 func getCommand(command string) (string, string) {
-	// commands := strings.Split(command, ",")
-	commands := strings.SplitN(command, ",", 1)
-	if len(commands) > 1 {
-		return strings.TrimSpace(commands[0]), strings.TrimSpace(commands[1])
-	} else {
-		return commands[0], ""
-	}
+	commands := strings.SplitN(command, ",", 2)
+	return strings.TrimSpace(commands[0]), strings.TrimSpace(commands[1])
 }
 
 func performAction(action, value string) {
@@ -59,20 +54,19 @@ func performAction(action, value string) {
 		{
 			// Check if the app is already started
 			if app.Size != 0 {
-				fmt.Println("App already started")
+				fmt.Println("App already started!")
 				return
 			}
-			fmt.Println("Starting parking lot..")
+			fmt.Println("Starting parking lot of size: " + value)
 			size, err := strconv.Atoi(value)
 			if err != nil {
 				log.Fatal(err)
 			}
 			app.CreateParkingLot(size)
-			// app = createParkingLot(size)
 		}
 	case "park":
 		{
-			value := strings.Split(value, ",")
+			value := strings.SplitN(value, ",", 2)
 			vehicle := new(m.Vehicle)
 			vehicle.Number = value[0]
 			vehicle.Color = value[1]
@@ -89,11 +83,4 @@ func performAction(action, value string) {
 	default:
 		fmt.Println("no command found")
 	}
-}
-
-func createParkingLot(size int) (pl *m.ParkingLot) {
-	var parkingLot = new(m.ParkingLot)
-	parkingLot.Size = size
-	parkingLot.ParkingSlots = make([]m.ParkingSlot, size)
-	return parkingLot
 }
